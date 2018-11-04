@@ -30,14 +30,26 @@ class Env:
     获取反馈+新的位置
     """
     def get_feedback(self,action):
+        self.drawrole()
         step=1 if action=='right' else -1
         if (self.role_position+step)==self.target_position:
             self.role_position+=step;
+            self.drawrole()
             return 1,self.role_position
         else:
             self.role_position+=step;
+            self.drawrole()
             return 0,self.role_position
 
+    """
+    画图
+    """
+    def drawrole(self):
+        x=['-' for i in range(self.length)]
+        x[self.role_position]='O'
+        x[self.target_position]='T'
+        print("\r{0}".format(''.join(x)),end='')
+        time.sleep(0.1)
 
 class RLBrain:
     def __init__(self,actions=['left','right']):
