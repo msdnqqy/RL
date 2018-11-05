@@ -1,5 +1,5 @@
 """
-    Q_learning实例
+    Q_learning环境
 """
 import tkinter as tk
 import pandas as pd;
