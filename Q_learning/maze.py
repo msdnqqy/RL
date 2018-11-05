@@ -13,7 +13,7 @@ class Maze(tk.Tk,object):
         2.初始化目标位置（只有一个）
         3.初始化陷阱个数和位置
     """
-    def __init__(self,width=10,height=10,target=None,chif=3):
+    def __init__(self,width=10,height=10,target=None,chif=9):
         super(Maze,self).__init__()
         self.title('my Maze')
         
@@ -76,8 +76,31 @@ class Maze(tk.Tk,object):
         渲染uI变化
     """
     def render(self):
-        time.sleep(1)
+        time.sleep(0.1)
         self.update()
+
+    def get_avaliable_action(self):
+        role_position=np.array(self.canvas.coords(self.role))
+        role_position/=self.unit
+
+        direction=np.array(['up','down','right','left'])
+        direction_able=np.array([True,True,True,True])
+
+        #目标无法超越边界
+        if role_position[0]==0:
+            direction_able[3]=False
+        if role_position[0]==(self.maze_width-1):
+            direction_able[2]=False
+        if role_position[1]==0:
+            direction_able[0]=False
+        if role_position[1]==(self.maze_height-1):
+            direction_able[1]=False
+        
+        return direction[direction_able]
+
+
+    def get_all_action(self):
+        return ['right','up','left','down']
 
     """
         步进环境,
@@ -124,10 +147,11 @@ class Maze(tk.Tk,object):
         return self.canvas.coords(self.role)
 
 def render():
-    action='right'
+    # action='right'
     for j in range(2):
         maze.reset()
-        for i in range(3):
+        for i in range(300):
+            action=np.random.choice(maze.get_avaliable_action(),size=1)[0]
             maze.step(action)
             maze.render()
         
