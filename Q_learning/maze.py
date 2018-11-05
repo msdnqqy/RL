@@ -124,14 +124,16 @@ class Maze(tk.Tk,object):
         role_position_next=self.canvas.coords(self.role)
 
         #计算奖励
+        is_success=False
         if role_position_next in self.target_arr:
             reward=1
+            is_success=True
         elif role_position_next in self.chif_arr:
             reward=-1
         else:
             reward=0
         
-        return reward,role_position_next
+        return reward,role_position_next,is_success
 
     """
         重置人物位置，返回人物当前坐标
