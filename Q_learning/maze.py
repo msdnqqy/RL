@@ -96,7 +96,7 @@ class Maze(tk.Tk,object):
         if role_position[1]==(self.maze_height-1):
             direction_able[1]=False
         
-        return direction[direction_able]
+        return direction[direction_able],role_position
 
 
     def get_all_action(self):
