@@ -138,22 +138,27 @@ class Maze(tk.Tk,object):
     """
         重置人物位置，返回人物当前坐标
     """
-    def reset(self):
+    def reset(self,position=None):
         try:
             self.canvas.delete(self.role)
         except:
             print('no role')
-        role_position=self.unit*np.array([np.random.randint(0,self.maze_width,size=1)[0],np.random.randint(0,self.maze_height,size=1)[0]])
+        if position!=None:
+            role_position=self.unit*np.array([position[0],position[1]])
+        else:
+            role_position=self.unit*np.array([np.random.randint(0,self.maze_width,size=1)[0],np.random.randint(0,self.maze_height,size=1)[0]])
+        
         self.role=self.canvas.create_rectangle(role_position[0],role_position[1],role_position[0]+self.unit,role_position[1]+self.unit,fill='red')
         self.update()
         return self.canvas.coords(self.role)
 
 def render():
     # action='right'
-    for j in range(2):
-        maze.reset()
-        for i in range(300):
-            action=np.random.choice(maze.get_avaliable_action(),size=1)[0]
+    for j in range(20):
+        time.sleep(2)
+        maze.reset([2,3])
+        for i in range(4):
+            action=np.random.choice(maze.get_avaliable_action()[0],size=1)[0]
             maze.step(action)
             maze.render()
         

@@ -27,7 +27,7 @@ def render():
         print('run end {0}'.format(j))
         print(rl.state_table)
         time.sleep(2)
-        maze.reset()
+        maze.reset([1,1])
 
 
 if __name__=='__main__':
