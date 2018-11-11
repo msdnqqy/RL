@@ -76,7 +76,7 @@ class Maze(tk.Tk,object):
         渲染uI变化
     """
     def render(self):
-        time.sleep(0.1)
+        time.sleep(0.03)
         self.update()
 
     def get_avaliable_action(self):
@@ -96,7 +96,7 @@ class Maze(tk.Tk,object):
         if role_position[1]==(self.maze_height-1):
             direction_able[1]=False
         
-        return direction[direction_able],role_position
+        return direction[direction_able],self.unit*role_position
 
 
     def get_all_action(self):
@@ -126,10 +126,10 @@ class Maze(tk.Tk,object):
         #计算奖励
         is_success=False
         if role_position_next in self.target_arr:
-            reward=1
+            reward=100
             is_success=True
         elif role_position_next in self.chif_arr:
-            reward=-1
+            reward=-100
         else:
             reward=0
         

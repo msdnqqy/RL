@@ -6,32 +6,41 @@ from RLbrain import RLbrain;
 
 def render():
     for j in range(200):
-        maze.reset()
+        maze.reset([0,0])
         is_success=False
 
+        steps=[]
         while not is_success:
             avaliable_actions,state=maze.get_avaliable_action()#获取当前所有能执行的动作
 
-            state_str_arr=[str(x) for x in state]
-            state_str=",".join(state_str_arr)
+            state_str_arr=np.array(state)/maze.unit
+
+            state_str='p_'+str(state_str_arr)
 
             action=rl.choose_action(state_str,avaliable_actions)#选择动作
             reward,state_next,is_success=maze.step(action)#获取环境奖励
 
-            state_next_str_arr=[str(x) for x in state_next]
-            state_next_str=",".join(state_next_str_arr)
+            steps.append([state_str,action])#存储经历，后续学习
 
-            rl.update(state_str,action,state_next_str,reward,is_success)#更新状态
+            state_next_str_arr=np.array(state_next)/maze.unit
+
+            state_next_str='p_'+str(state_next_str_arr)
+
+            rl.update(state_str,action,state_next_str,reward,is_success,steps)#更新状态
             maze.render()
 
         print('run end {0}'.format(j))
-        print(rl.state_table)
+        print(rl.state_table.round(2))
         time.sleep(2)
-        maze.reset([1,1])
+
+        #进行强制更新，更新全部路径的权重多次训练之后就能够得到优秀权重
+        rl.forceUpdate(steps,reward/10)
+        print("forceUpdate")
+        # print(rl.state_table.round(2))
 
 
 if __name__=='__main__':
-    maze=Maze(4,4,chif=2)
+    maze=Maze(7,7,chif=9)
     rl=RLbrain(maze.get_all_action())#获取所有动作
     maze.after(100,render)
     maze.mainloop()

@@ -21,7 +21,9 @@ class RLbrain(object):
 
     def check_state_exist(self,state):
         if state not in self.state_table.index:
-            self.state_table.loc[state]=[0.0]*len(self.actions)
+            # self.state_table.loc[state]=[0.0]*len(self.actions)
+            # self.state_table.loc[state]=np.random.rand((len(self.actions)))
+            self.state_table.loc[state]=[0.1]*len(self.actions)
 
     """
         根据环境奖励、惩罚更新state_table
@@ -29,13 +31,18 @@ class RLbrain(object):
         Q_估计=self.state_table[state,action]
         Q_现实=reward if is_success else gamma*(state_table[state_next,:].max())
     """
-    def update(self,state,action,state_next,reward,is_success):
+    def update(self,state,action,state_next,reward,is_success,steps):
         self.check_state_exist(state)
         self.check_state_exist(state_next)
 
         q_pred=self.state_table.loc[state,action]
         q_real= reward if is_success else (reward+self.gamma*(self.state_table.loc[state_next,:].max()))
-        self.state_table.loc[state,action]+=self.lr*(q_real-q_pred)
+
+        if([state,action] in steps):
+            self.state_table.loc[state,action]-=abs(self.lr*(q_real-q_pred))
+        else:   
+            self.state_table.loc[state,action]+=(self.lr*(q_real-q_pred))
+        # self.state_table.loc[state,action]+=(self.lr*(q_real-q_pred))
 
         return is_success,self.state_table
 
@@ -46,13 +53,25 @@ class RLbrain(object):
         self.check_state_exist(state)
 
         #给予一定概率随机选择
-        if np.random.rand()>0.9:
+        if np.random.rand()>0.99:
             return np.random.choice(avaliable_actions,size=1)[0]
         
         #其他情况从state中选择
         #选出state中权重最大的索引arr
         max_actions=np.array(avaliable_actions)[self.state_table.loc[state,avaliable_actions]==self.state_table.loc[state,avaliable_actions].max()]
         return np.random.choice(max_actions,size=1)[0]
+
+    def forceUpdate(self,steps,reward):
+        # if len(steps)<10: return
+        steps_gone=[]
+        for i in range(len(steps)):
+            step=steps[i]
+            if step[0] in steps_gone:
+                self.state_table.loc[step[0],step[1]]-=abs((self.gamma**(i))*reward)
+            else:
+                self.state_table.loc[step[0],step[1]]+=abs((self.gamma**(i))*reward)
+            steps_gone.append(step[0])
+        return self.state_table
 
 
 if __name__=='__main__':
