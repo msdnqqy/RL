@@ -14,19 +14,18 @@ def render():
             avaliable_actions,state=maze.get_avaliable_action()#获取当前所有能执行的动作
 
             state_str_arr=np.array(state)/maze.unit
-
+            #x,y,x+1,y+1
             state_str=str(state_str_arr)
 
             action=rl.choose_action(state_str,avaliable_actions)#选择动作
             reward,state_next,is_success=maze.step(action)#获取环境奖励
-
-            steps.append([state_str,action])#存储经历，后续学习
 
             state_next_str_arr=np.array(state_next)/maze.unit
 
             state_next_str=str(state_next_str_arr)
 
             rl.update(state_str,action,state_next_str,reward,is_success,steps)#更新状态
+            steps.append([state_str,action])#存储经历，后续学习
             maze.render()
             maze.write_weight(rl.state_table)
 
@@ -42,7 +41,7 @@ def render():
 
 
 if __name__=='__main__':
-    maze=Maze(7,7,chif=9)
+    maze=Maze(6,6,chif=5)
     rl=RLbrain(maze.get_all_action())#获取所有动作
     maze.after(100,render)
     maze.mainloop()

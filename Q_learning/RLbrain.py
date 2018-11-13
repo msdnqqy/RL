@@ -23,7 +23,7 @@ class RLbrain(object):
         if state not in self.state_table.index:
             # self.state_table.loc[state]=[0.0]*len(self.actions)
             # self.state_table.loc[state]=np.random.rand((len(self.actions)))
-            self.state_table.loc[state]=[0.1]*len(self.actions)
+            self.state_table.loc[state]=[0.0]*len(self.actions)
 
     """
         根据环境奖励、惩罚更新state_table
@@ -53,7 +53,7 @@ class RLbrain(object):
         self.check_state_exist(state)
 
         #给予一定概率随机选择
-        if np.random.rand()>0.99:
+        if np.random.rand()>0.9:
             return np.random.choice(avaliable_actions,size=1)[0]
         
         #其他情况从state中选择
