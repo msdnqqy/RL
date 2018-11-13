@@ -7,7 +7,7 @@ import numpy as np;
 import time;
 
 class Maze(tk.Tk,object):
-
+    text_obj={}
     """
         1.初始化画布宽高
         2.初始化目标位置（只有一个）
@@ -19,7 +19,7 @@ class Maze(tk.Tk,object):
         
         self.maze_width=width
         self.maze_height=height
-        self.unit=80#每个格子的大小
+        self.unit=102#每个格子的大小
 
         #初始化目标位置坐标
         target= target if (target !=None) else [np.random.randint(0,self.maze_width,size=1)[0],np.random.randint(0,self.maze_height,size=1)[0]]
@@ -54,6 +54,8 @@ class Maze(tk.Tk,object):
         for i in range(self.maze_width):
             for j in range(self.maze_height):
                 self.canvas.create_text(self.unit*(0.5+i),self.unit*(0.5+j),text="({0},{1})".format(i,j))
+
+
         #画陷阱
         chif_arr=[]
         for ｉ in range(len(self.chif_xy)):
@@ -74,12 +76,45 @@ class Maze(tk.Tk,object):
 
         self.canvas.pack()
         # self.mainloop()
-    
+
+    def write_weight(self,state_table):
+        #遍历取值
+        if(Maze.text_obj is None):
+            Maze.text_obj={}
+
+        for index,row in state_table.iterrows():
+            # print("index:",index)
+            asix_arr=index.replace('[','').replace(']','').split(" ")
+            (x,y)=(asix_arr[0],asix_arr[1])
+            (left,up,down,right)=(row['left'],row['up'],row['down'],row['right'])
+
+            if(index not in Maze.text_obj.keys()):
+                Maze.text_obj[index]={
+                    'up':self.canvas.create_text(self.unit*(float(x)+0.5),self.unit*float(y)+20,text=up.round(1),fill='grey'),
+                    'down':self.canvas.create_text(self.unit*(float(x)+0.5),self.unit*(float(y)+1)-20,text=down.round(1),fill='grey'),
+                    'right':self.canvas.create_text(self.unit*(float(x)+1)-20,self.unit*(float(y)+0.5),text=right.round(1),fill='grey'),
+                    'left':self.canvas.create_text(self.unit*float(x)+20,self.unit*(float(y)+0.5),text=left.round(1),fill='grey'),
+                }
+
+            else:
+                self.canvas.itemconfig(Maze.text_obj[index]['up'],text=up.round(1),fill='grey')
+                self.canvas.itemconfig(Maze.text_obj[index]['down'],text=down.round(1),fill='grey')
+                self.canvas.itemconfig(Maze.text_obj[index]['left'],text=left.round(1),fill='grey')
+                self.canvas.itemconfig(Maze.text_obj[index]['right'],text=right.round(1),fill='grey')
+
+            index_max=row.loc[:].idxmax()
+            self.canvas.itemconfig(Maze.text_obj[index][index_max],fill='red')
+            
+            
+        self.update()
+
+
+            
     """
         渲染uI变化
     """
     def render(self):
-        time.sleep(0.03)
+        time.sleep(0.2)
         self.update()
 
     def get_avaliable_action(self):
