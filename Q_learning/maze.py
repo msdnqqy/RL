@@ -13,7 +13,7 @@ class Maze(tk.Tk,object):
         2.初始化目标位置（只有一个）
         3.初始化陷阱个数和位置
     """
-    def __init__(self,width=10,height=10,target=None,chif=9):
+    def __init__(self,width=8,height=10,target=None,chif=9):
         super(Maze,self).__init__()
         self.title('my Maze')
         
@@ -33,7 +33,7 @@ class Maze(tk.Tk,object):
         self.chif=chif
         self.chif_xy=np.hstack([chif_x,chif_y])
 
-        self.geometry('{0}x{1}'.format((self.maze_height)*self.unit,(self.maze_width)*self.unit))
+        self.geometry('{0}x{1}'.format((self.maze_width)*self.unit,(self.maze_height)*self.unit))
         self.build()
         self.reset()
 
@@ -51,6 +51,9 @@ class Maze(tk.Tk,object):
         for i in range(self.maze_height):
             self.canvas.create_line(0,i*self.unit,self.unit*self.maze_width,i*self.unit,fill='green',width=1)
         
+        for i in range(self.maze_width):
+            for j in range(self.maze_height):
+                self.canvas.create_text(self.unit*(0.5+i),self.unit*(0.5+j),text="({0},{1})".format(i,j))
         #画陷阱
         chif_arr=[]
         for ｉ in range(len(self.chif_xy)):
