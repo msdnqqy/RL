@@ -6,7 +6,8 @@ from RLbrain import RLbrain;
 
 def render():
     for j in range(200):
-        maze.reset([0,0])
+        # maze.reset([0,0])
+        maze.reset()
         is_success=False
 
         steps=[]
@@ -15,14 +16,14 @@ def render():
 
             state_str_arr=np.array(state)/maze.unit
             #x,y,x+1,y+1
-            state_str=str(state_str_arr)
+            state_str=str(state_str_arr.tolist())
 
             action=rl.choose_action(state_str,avaliable_actions)#选择动作
             reward,state_next,is_success=maze.step(action)#获取环境奖励
 
             state_next_str_arr=np.array(state_next)/maze.unit
 
-            state_next_str=str(state_next_str_arr)
+            state_next_str=str(state_next_str_arr.tolist())
 
             rl.update(state_str,action,state_next_str,reward,is_success,steps)#更新状态
             steps.append([state_str,action])#存储经历，后续学习
@@ -31,7 +32,7 @@ def render():
 
         print('run end {0}'.format(j))
         print(rl.state_table.round(2))
-        time.sleep(2)
+        time.sleep(0.5)
 
         # maze.write_weight(rl.state_table)
         #进行强制更新，更新全部路径的权重多次训练之后就能够得到优秀权重
@@ -41,7 +42,7 @@ def render():
 
 
 if __name__=='__main__':
-    maze=Maze(6,6,chif=5)
+    maze=Maze(8,6,chif=15)
     rl=RLbrain(maze.get_all_action())#获取所有动作
     maze.after(100,render)
     maze.mainloop()

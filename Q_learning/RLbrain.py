@@ -53,7 +53,7 @@ class RLbrain(object):
         self.check_state_exist(state)
 
         #给予一定概率随机选择
-        if np.random.rand()>0.9:
+        if np.random.rand()>0.8:
             return np.random.choice(avaliable_actions,size=1)[0]
         
         #其他情况从state中选择
